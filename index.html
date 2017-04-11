@@ -1,48 +1,112 @@
+<!DOCTYPE html>
 <html>
 <head>
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" 
-
-href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
-
-integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" 
-
-crossorigin="anonymous">
-
-<!-- Optional theme -->
-<link rel="stylesheet" 
-
-href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
-
-integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" 
-
-crossorigin="anonymous">
-
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
-
-integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" 
-
-crossorigin="anonymous"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="text/javascript" src="app.js"></script>
+	<script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!--angular js-->
+	<script data-require="angular.js@1.5.8" data-semver="1.5.8" src="https://code.angularjs.org/1.5.8/angular.js"></script>
+	<script type="text/javascript" src="app.js"></script>
 </head>
 <body>
-<div class="container">
-	<div class="row equal">
-	   <div class="col-md-6">
-		<div class="col-md-3" style="text-align:right">Lebal</div>
-		<div class="col-md-6">
-			<input type="text"/>
+<div class="container-fluid row" ng-app="app" ng-controller="mainControl" style="background-color: #f9f9f9">
+
+	<div class="col-md-2">
+		<input type="file" value="Browser Folder" onChange="selectFolder(event)" webkitdirectory directory>
+		<script type="text/javascript">
+			function selectFolder(e) {
+				console.log(e);
+				var theFiles = e.target.files;
+				for (var i=0, file; file=theFiles[i]; i++) {
+					document.write("<li>" + file.name + " - " + e.webkitRelativePath);
+				}
+			}
+		</script>
+		<div id="nav_display" class="panel panel-default" ng-controller="showNav">
+			<div class="panel-heading">
+				<h3 style="display:inline;">File List</h3>
+			</div>
+			<div class="panel-body" style="padding-top: 0px">
+				<div class="list-group row">
+				  <a href="#" class="list-group-item" ng-repeat="f in files track by $index" 
+				  ng-click="getFileData(f)">{{f}}</a>
+				</div>
+			</div> 
 		</div>
-		<div class="col-md-3"></div>
-	   </div>
-	   <div class="col-md-6">
-		<div class="col-md-3" style="text-align:right">Lebal 2</div>
-		<div class="col-md-6">
-			<input type="text"/>
+	</div>
+	<div class="col-md-10">
+		<div ng-controller="showlist">
+			<div class="alert alert-success alert-dismissable" ng-if="saved">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+				Saved successfully
+			</div>
+			<div id="table_display" class="panel panel-default">
+				<div class="panel-heading" ng-click="showlisting()">
+					<h3 style="display:inline;">{{file}}</h3>
+					<input ng-if="chbxHead" class="form-control" type="text" ng-model="nHeader"></input><button ng-if="chbxHead" type="button" class="btn btn-default" ng-click="newHeader()">New Header</button>
+					<input type="checkbox" ng-model="chbxHead">_Header</input>
+					<input type="checkbox" ng-model="chbxCell">_Cell Form</input>
+					<span ng-if="chbxCell"><input type="checkbox" ng-model="chbxEdit"/>_Cell Edit</span>
+					<span><button type="button" class="btn btn-default" ng-click="btnSave()" style="float: right;">Save</button></span>
+				</div>
+				<div ng-show="listView" class="panel-body">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th width="40px"><i class="glyphicon glyphicon-th-list"/></th>
+								<th style="min-width: 96px" ng-repeat="x in data.headers">{{x}}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="d in data.values track by $index" ng-init="sectionIndex = $index">
+								<div class="row">
+									<td><!--a ng-click="editRow(sectionIndex)" href="#"-->
+										<a ng-click="editRow($index);myfunction($event);" href="#">
+										<div style="vertical-align: bottum;">
+											<span class="glyphicon glyphicon-edit"/>
+										</div></a>
+									</td>
+									<td ng-repeat="h in d track by $index">
+										<input ng-if="chbxCell" id="" class="form-control" type="text" 
+										ng-model="data.values[sectionIndex][$index]" ng-disabled="{{chbxEdit}}"></input>
+										<span ng-if="!chbxCell">{{h}}</span>
+									</td>
+								</div>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
-		<div class="col-md-3"></div>
-	   </div>	
+		<div ng-show="showingform" ng-controller="showform">
+			<div id="form_display" class="panel panel-default">
+				<div class="panel-heading">
+					<h3 style="display:inline;">Form Header</h3>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal">
+				  		<div class="col-md-6" ng-repeat="f in data.d track by $index" ng-init="item = $index">		
+				  			<div class="form-group">
+				    			<label class="control-label col-sm-3 col-form-label" for="email">{{data.h[item]}}</label>
+				    			<div class="col-sm-9">
+				      				<input type="text" class="form-control" id="" placeholder="placeholder" ng-model="data.d[item]"/>
+					    		</div>
+					  		</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
+<script>
+
+</script>
 </body>
 </html>

@@ -3,9 +3,12 @@ var fs = require('fs');
 var url = require('url');
 var path = require('path');
 var express = require('express');
+var busboy = require('connect-busboy');
 var app = express();
+app.use(busboy());
 if(typeof require !== 'undefined') XLSX = require('xlsx');
 
+var FILE_LOCATION = './Files/';
 app.use(express.static('./'));
 // Create a server
 app.get('/', function(req, res){
@@ -20,7 +23,7 @@ app.get('/index.html', function (req, res) {
 
 app.get('/*_xlsx', function (req, res) {
   console.log('Get xlsx - ' + req.path);
-  var file = req.path.replace("_",".").replace("/","");
+  var file = './Files/' + req.path.replace("_",".").replace("/","");
   var workbook = XLSX.readFile(file);
   var dataObj = XLSX.utils.sheet_to_row_object_array(workbook.Sheets.Sheet1);
   var data = {};
@@ -31,7 +34,7 @@ app.get('/*_xlsx', function (req, res) {
 
 app.post('/updatedata', function (req, res) {
 
-  console.log('Post time');
+  console.log('Updating file at ' + FILE_LOCATION);
   var body = '';
   req.on('data', function (data) {
     body += data;
@@ -43,11 +46,11 @@ app.post('/updatedata', function (req, res) {
   });  
   req.on('end', function () {
     var post = JSON.parse(body);
-    console.log('Post time' + post.file);
+    console.log('Post ' + post.file);
     var xlData = post.values;
     xlData.unshift(post.headers);
     //writeExcel(xlData, 'time.xlsx');
-    writeExcel(xlData, post.file);
+    writeExcel(xlData, FILE_LOCATION + post.file);
     res.writeHead(200, {'Content-Type': 'text/html'});   
     res.end();
   });
@@ -89,7 +92,28 @@ app.post('/json-handler', function (req, res) {
   });
 });
 
-var server = app.listen(process.env.PORT || 8081, function () {
+app.post('/*upload', function (req, res) {
+  var fstream;
+  req.pipe(req.busboy);
+  req.busboy.on('file', function (fieldname, file, filename) {
+      console.log("Uploading: " + filename); 
+      fstream = fs.createWriteStream(__dirname + '/Files/' + filename);
+      file.pipe(fstream);
+      fstream.on('close', function () {
+          res.redirect('back');
+      });
+  });
+});
+
+app.post('/download*', function (req, res) {
+  var fileName = req.path.split('/')[2];
+  console.log("Downloading... " + fileName);
+  var file = __dirname + '/Files/' + fileName + '.xlsx';
+  res.setHeader('Content-disposition', 'attachment; filename=' + file);
+  res.download(file, fileName + '.xlsx'); // Set disposition and send it.
+});
+
+var server = app.listen(8081, function () {
   var host = server.address().address;
   var port = server.address().port;
   console.log(`Example app listening at http://${host}:${port}`);

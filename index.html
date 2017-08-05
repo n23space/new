@@ -15,7 +15,9 @@
 	<script type="text/javascript" src="app.js"></script>
 	<style>
 		html, body {
-			height: 100%;
+			/*height: 100%;*/
+			background-color: grey;
+			min-height: 100vp;
 		}
 		.pull-right:after, .panel-heading:after {
 			clear: both;
@@ -44,7 +46,7 @@
 		<h4 style="color: white; font-size:40px; margin:2px	">Welcome To My Site</h4>
     </div>
 </div>
-<div class="container-fluid row" ng-app="app" ng-controller="mainControl" style="background-color: grey; height:100%">
+<div class="container-fluid row" ng-app="app" ng-controller="mainControl" style="background-color: grey; ">
 	<nav class="navbar navbar-inverse">
 	  	<div class="container-fluid">
 		    <div class="navbar-header">
@@ -97,7 +99,7 @@
 	</div>
 	<div class="col-md-10">
 		<div ng-controller="showlist">
-			<div class="alert alert-success alert-dismissable" ng-if="saved">
+			<div class="alert alert-success alert-dismissable fade in" ng-if="saved">
 				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 				Saved successfully
 			</div>
@@ -105,18 +107,22 @@
 				<div class="panel-heading" ng-click="showlisting()">
 					<h3 style="display:inline;">{{file.split('_')[0]}}</h3>
 					<span class="pull-right">
-						<label class="checkbox-inline"><input type="checkbox" ng-model="chbxCell">Cell Form</label>
-						<div class="dropdown" style="display:inline">
-							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">	 Add<span class="caret"></span>
-						  	</button>
-						    <ul class="dropdown-menu">
-						    	<li><a data-toggle="modal" data-target="#myModal">Column</a></li>
-						    	<li><a ng-click="addRow()">Row</a></li>
-						    	<li><a ng-click="addColumn()">JavaScript</a></li>
-						  	</ul>
-						</div>
+						<span ng-show="listView">
+							<label class="checkbox-inline"><input type="checkbox" ng-model="chbxCell">Cell Form</label>
+							<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">Column</button>
+							<button type="button" class="btn btn-default" ng-click="addRow()">Row</button>
+							<div class="dropdown" style="display:inline">
+								<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Add<span class="caret"></span>
+							  	</button>
+							    <ul class="dropdown-menu">
+							    	<li><a data-toggle="modal" data-target="#myModal">Column</a></li>
+							    	<li><a ng-click="addRow()">Row</a></li>
+							    	<li><a ng-click="addColumn()">JavaScript</a></li>
+							  	</ul>
+							</div>
+						</span>	
 						<!--label class="checkbox-inline"><input type="checkbox" ng-model="chbxEdit">Cell Edit</label-->
-						<button type="button" class="btn btn-default" ng-click="btnSave()">Save</button>
+						<button type="button" class="btn btn-primary" ng-click="btnSave()">Save</button>
 					</span>
 				</div>
 				<div ng-show="listView" class="panel-body">

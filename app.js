@@ -74,7 +74,7 @@ app.controller("showlist", function ($scope, $http, $rootScope, $timeout, $windo
 		$http.post("updatedata", $scope.data)
 		.then(function(response) {
 			$scope.saved = true;
-            $timeout(function(){ $scope.saved = false; }, 3000);
+      $timeout(function(){ $scope.saved = false; }, 3000);
 		});
 	};
 

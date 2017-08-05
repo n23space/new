@@ -41,15 +41,20 @@ app.post('/updatedata', function (req, res) {
     // Too much POST data, kill the connection!
     // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
     if (body.length > 1e6) {
-      request.connection.destroy();
+      req.connection.destroy();
     }
   });  
   req.on('end', function () {
     var post = JSON.parse(body);
     console.log('Post ' + post.file);
-    var xlData = post.values;
-    xlData.unshift(post.headers);
+    try {
+      var xlData = post.values;
+      xlData.unshift(post.headers);
+    } catch(e) {
+      console.log('Error writing file ' + e);
+    }
     //writeExcel(xlData, 'time.xlsx');
+    console.log('writing file ' + post.file);
     writeExcel(xlData, FILE_LOCATION + post.file);
     res.writeHead(200, {'Content-Type': 'text/html'});   
     res.end();
@@ -73,7 +78,7 @@ app.get('/files', function (req, res) {
     res.send(files); 
   });
 });
-
+/*
 app.post('/json-handler', function (req, res) {
   var body = '';
   req.on('data', function (data) {
@@ -91,7 +96,7 @@ app.post('/json-handler', function (req, res) {
     res.end();
   });
 });
-
+*/
 app.post('/*upload', function (req, res) {
   var fstream;
   req.pipe(req.busboy);
@@ -192,6 +197,7 @@ function Workbook() {
 
 function writeExcel(data, fileName) {
   //var ws_name = "SheetJS";
+  console.log('Writing file: ' + fileName);
   var ws = sheet_from_array_of_arrays(data);
   var workbook = XLSX.readFile(fileName);
   workbook.Sheets.Sheet1 = ws;

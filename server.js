@@ -1,4 +1,4 @@
-var http = require('http');
+var https = require('https');
 var fs = require('fs');
 var url = require('url');
 var path = require('path');
@@ -9,6 +9,12 @@ app.use(busboy());
 if(typeof require !== 'undefined') XLSX = require('xlsx');
 
 var FILE_LOCATION = './Files/';
+app.all("/api/*", function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
+  return next();
+});
 app.use(express.static('./'));
 // Create a server
 app.get('/', function(req, res){
@@ -61,14 +67,48 @@ app.post('/updatedata', function (req, res) {
   });
 });
 
-app.get('/time', function (req, res) {
-  console.log('Get time');
-  var workbook = XLSX.readFile('time.xlsx');
-  var dataObj = XLSX.utils.sheet_to_row_object_array(workbook.Sheets.Sheet1);
-  var data = {};
-  data.headers = sheet_object_to_arrays(dataObj, 1);
-  data.values = sheet_object_to_arrays(dataObj, 0);
-  res.send(data); 
+app.post('/snowdata', function (req, res) {
+  console.log('Get snowdata');
+  var body = '';
+  req.on('data', function (data) {
+    body += data;
+    if (body.length > 1e6) {
+      req.connection.destroy();
+    }
+  });
+  
+  req.on('end', function () {
+    console.log('Body ' + body);
+    const user = 'admin';
+    const pass = 'itarsi';
+    var options = {
+       host: 'dev24912.service-now.com',
+       port: '443',
+       path: '/incident.do?JSONv2&sysparm_action=getRecords&sysparm_query=number=' + body,
+       auth: user + ':' + pass,
+       method: 'GET'  
+    };
+    console.info(options);
+    var dataa = '';
+    // Callback function is used to deal with response
+    var reqGet = https.request(options, function(response){
+       ///console.log('StatusCode: ',  response.statusCode);
+       //console.log('Header: ',  response.headers);
+       response.on('data', function(d){
+        dataa += d;
+        //process.stdout.write(d);
+       });
+       response.on('end', function(){
+          res.send(dataa);
+       });
+    });
+    
+    reqGet.on('error', function(e){
+      console.error(e);
+      res.send(e);
+    });
+    reqGet.end();
+  });
 });
 
 app.get('/files', function (req, res) {

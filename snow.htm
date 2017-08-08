@@ -1,0 +1,31 @@
+<div ng-controller="snowCtrl">	
+	<div >
+		<div id="recievedData1" class="container">
+			<nav class="navbar navbar-light bg-faded justify-content-between">
+				<label id="label" class="control-label" for="number" style="color: white;">Incident Number: </label>
+		  		<form class="form-inline">
+		    		<input class="form-control mr-sm-2" type="text" placeholder="Incident Number" ng-model="number">
+		    		<button class="btn btn-outline-success my-2 my-sm-0" type="button" ng-click="getData();">Get Info</button>
+		  		</form>
+			</nav>
+			<div class="panel panel-default" ng-if="onData">
+				<div class="panel-heading">
+					<h4>{{snowd.number}} {{ snowd.short_description}}</h4>		
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal">
+					  		<div class="col-md-6" ng-repeat="(x, y) in snowd track by $index" ng-init="item =$index">		
+					  			<div class="form-group" ng-if="y != ''">
+					    			<label class="control-label col-sm-3 col-form-label" for="email">{{x}}</label>
+					    			<div class="col-sm-6">
+					      				<input type="text" class="form-control" id="" placeholder="data" ng-model="y"/>
+						    		</div>
+						    		<div class="col-sm-3"></div>
+						  		</div>
+							</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

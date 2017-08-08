@@ -1,4 +1,35 @@
-var app = angular.module("app", []);
+var app = angular.module("app", ["ngRoute"]);
+app.config(function($routeProvider, $locationProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "main.htm",
+        controller  :  "mainControl",
+        resolve: {
+          // I will cause a 1 second delay
+          delay: function($q, $timeout) {
+            var delay = $q.defer();
+            $timeout(delay.resolve, 1000);
+            return delay.promise;
+          }
+        }
+    })
+    .when("/snow", {
+        templateUrl : "snow.htm",
+        controller  : "snowCtrl",
+        resolve: {
+          // I will cause a 1 second delay
+          delay: function($q, $timeout) {
+            var delay = $q.defer();
+            $timeout(delay.resolve, 1000);
+            return delay.promise;
+          }
+        }
+    })
+    .otherwise({
+        redirectTo: '/'
+    });
+    $locationProvider.html5Mode(true);
+});
 app.service('modalData', function(){
     //var modal = {};
     this.mData = {};
@@ -26,6 +57,41 @@ app.service('downloadFile', ['$http', function($http){
         });
     };
 }]);
+app.controller("snowCtrl", function($scope, $rootScope, $timeout, $http){
+  //snow app
+  $scope.number = 'INC0010019';
+
+  $scope.getData = function () {
+    $scope.snowd = {};
+    $scope.onData = false;
+    if ($scope.number.indexOf(' ') > 0){
+      alert("enter valid entry without spaces");
+      return;
+    }
+    $http.post("snowdata", $scope.number)
+    .then(function(response) {
+      var obj = response.data.records[0];
+      if (obj == null) {
+        alert("no data found")
+        $scope.onData = false;
+        return; 
+      }
+      var keys = Object.keys(obj),
+          i, len = keys.length;
+      keys.sort();
+      for (i=0; i < len; i++) {
+        if (obj[keys[i]] == '' || keys[i].indexOf('_') == 0)  {
+          continue;
+        }
+        $scope.snowd[keys[i]] = obj[keys[i]];
+      }
+      $scope.onData = true;
+    }, function() {
+      alert('server error');
+      $scope.onData = false;  
+    });
+  }
+});
 app.controller("mainControl", function($scope, $rootScope, $timeout, $http){
     $scope.toView = "list"
     $scope.$on('formdata', function(evt, data) {

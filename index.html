@@ -12,6 +12,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<!--angular js-->
 	<script data-require="angular.js@1.5.8" data-semver="1.5.8" src="https://code.angularjs.org/1.5.8/angular.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.js"></script>
 	<script type="text/javascript" src="app.js"></script>
 	<style>
 		html, body {
@@ -43,18 +44,18 @@
 <div class="container-fluid">
 	<div class="row" style="background-image:url(Chrysanthemum.jpg);
     background-repeat:initial; height: 50px !important">
-		<h4 style="color: white; font-size:40px; margin:2px	">Welcome To My Site</h4>
+		<h4 style="color: white; font-size:40px; margin:2px	">Welcome</h4>
     </div>
 </div>
 <div class="container-fluid row" ng-app="app" ng-controller="mainControl" style="background-color: grey; ">
 	<nav class="navbar navbar-inverse">
 	  	<div class="container-fluid">
 		    <div class="navbar-header">
-		    	<a class="navbar-brand" href="#">WebSiteName</a>
+		    	<a class="navbar-brand" href="/">Menu Bar</a>
 		    </div>
 		    <ul class="nav navbar-nav">
-		      	<li class="active"><a href="#">Home</a></li>
-		      	<li class="dropdown">
+		      	<li class="active"><a ng-href="/">Home</a></li>
+		      	<!--li class="dropdown">
 		        	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Page 1 <span class="caret"></span></a>
 			        <ul class="dropdown-menu">
 			        	<li><a href="#">Page 1-1</a></li>
@@ -62,15 +63,15 @@
 			            <li><a href="#">Page 1-3</a></li>
 			        </ul>
 			    </li>
-		      	<li><button class="btn btn-danger navbar-btn" ng-click="fileDownload()">Download</button></li>
-		      	<li><a href="#">Link</a></li>
+		      	<li><button class="btn btn-danger navbar-btn" ng-click="fileDownload()">Download</button></li-->
+		      	<li><a href="/snow">SNOW</a></li>
 		    </ul>
-		    <button class="btn btn-danger navbar-btn" data-toggle="modal" data-target="#myModal">Open Modal</button>
+		    <!--button class="btn btn-danger navbar-btn" data-toggle="modal" data-target="#myModal">Open Modal</button-->
 		    <form class="navbar-form navbar-right">
 			  	<div class="input-group">
-				    <input type="text" class="form-control" placeholder="Search">
+				    <input type="text" class="form-control" placeholder="Search" ng-disabled="true">
 				    <div class="input-group-btn">
-				      	<button class="btn btn-default" type="submit">
+				      	<button class="btn btn-default" type="submit" ng-disabled="true">
 				       		<i class="glyphicon glyphicon-search"></i>
 				      	</button>
 				    </div>
@@ -78,141 +79,10 @@
 			</form>
 	  	</div>
 	</nav>
-	<div class="col-md-2">
-		<div id="nav_display" class="panel panel-default" ng-controller="showNav">
-			<div class="panel-heading">
-				<h3 style="display:inline;">File List</h3>
-			</div>
-			<div class="panel-body" style="padding-top: 0px">
-				<div class="list-group row">
-			  		<a ni-context-menu href="#" class="list-group-item" ng-repeat="f in files track by $index" 
-			  		ng-click="getFileData(f)">{{f.split('.')[0]}}</a>
-				</div>
-			</div> 
-		</div>
-		<div class="panel">
-			<form method='post' action='upload' enctype="multipart/form-data">
-	        	<input type='file' name='displayImage' class="form-control"/>
-	        	<input type='submit' class="form-control"/>
-	        </form>
-	    </div>
-	</div>
-	<div class="col-md-10">
-		<div ng-controller="showlist">
-			<div class="alert alert-success alert-dismissable fade in" ng-if="saved">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				Saved successfully
-			</div>
-			<div id="table_display" class="panel panel-default">
-				<div class="panel-heading" ng-click="showlisting()">
-					<h3 style="display:inline;">{{file.split('_')[0]}}</h3>
-					<span class="pull-right">
-						<span ng-show="listView">
-							<label class="checkbox-inline"><input type="checkbox" ng-model="chbxCell">Cell Form</label>
-							<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">Column</button>
-							<button type="button" class="btn btn-default" ng-click="addRow()">Row</button>
-							<div class="dropdown" style="display:inline">
-								<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Add<span class="caret"></span>
-							  	</button>
-							    <ul class="dropdown-menu">
-							    	<li><a data-toggle="modal" data-target="#myModal">Column</a></li>
-							    	<li><a ng-click="addRow()">Row</a></li>
-							    	<li><a ng-click="addColumn()">JavaScript</a></li>
-							  	</ul>
-							</div>
-						</span>	
-						<!--label class="checkbox-inline"><input type="checkbox" ng-model="chbxEdit">Cell Edit</label-->
-						<button type="button" class="btn btn-primary" ng-click="btnSave()">Save</button>
-					</span>
-				</div>
-				<div ng-show="listView" class="panel-body">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th width="40px"><i class="glyphicon glyphicon-th-list"/></th>
-								<th style="min-width: 96px" ng-repeat="x in data.headers">{{x}}</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-repeat="d in data.values track by $index" ng-init="sectionIndex = $index">
-								<div class="row">
-									<td><!--a ng-click="editRow(sectionIndex)" href="#"-->
-										<a ng-click="editRow($index);myfunction($event);" href="#">
-										<div style="vertical-align: bottum;">
-											<span class="glyphicon glyphicon-edit"/>
-										</div></a>
-									</td>
-									<!--td ng-repeat="h in d track by $index"-->
-									<td ng-repeat="h in data.headers track by $index">	
-										<input ng-if="chbxCell" id="" class="form-control" type="text" 
-										ng-model="data.values[sectionIndex][$index]" ng-disabled="{{chbxEdit}}"></input>
-										<!--span ng-if="!chbxCell">{{h}}</span-->
-										<span ng-if="!chbxCell">{{data.values[sectionIndex][$index]}}</span>
-									</td>
-								</div>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-		<div ng-show="showingform" ng-controller="showform">
-			<div id="form_display" class="panel panel-default">
-				<div class="panel-heading">
-					<h3 style="display:inline; width:auto;">{{data.d[data.r][1] || "Form Header"}}</h3>
-					<div class="btn-group pull-right">
-						<a id="upArrow" class="btn btn-default btn-sm" ng-click="prevRow()" ng-disabled="upAwDisable">
-	          				<span class="glyphicon glyphicon-arrow-up"></span>
-	        			</a>
-	        			<a id="downArrow" class="btn btn-default btn-sm" ng-click="nextRow()" ng-disabled="dnAwDisable">
-	          				<span class="glyphicon glyphicon-arrow-down"></span>
-	        			</a>
-        			</div>
-				</div>
-				<div class="panel-body">
-					<form class="form-horizontal">
-					  		<div class="col-md-6" ng-repeat="f in data.d[data.r] track by $index" ng-init="item =$index">		
-					  			<div class="form-group">
-					    			<label class="control-label col-sm-3 col-form-label" for="email">{{data.h[item]}}</label>
-					    			<div class="col-sm-9">
-					      				<input type="text" class="form-control" id="" placeholder="placeholder" ng-model="data.d[data.r][item]"/>
-						    		</div>
-						  		</div>
-							</div>
-					</form>
-				</div>
-				<!--input class="form-control" type="date" id="exampleInput" name="input" ng-model="example.value"
-       placeholder="yyyy-MM-dd" min="2017-01-01" max="2017-12-31" required /-->
-			</div>
-		</div>
-	</div>
-	<!-- Modal -->
-	<div ng-controller="modalCont">
-		<div id="myModal" class="modal fade" role="dialog">
-			<div class="modal-dialog">
-				<!-- Modal content-->
-		    	<div class="modal-content col-md-12">
-	    			<div class="modal-header col-md-12">
-		    			<button type="button" class="close" data-dismiss="modal">&times;</button>
-		    			<h4 class="modal-title">Modal Header</h4>
-		    		</div>
-		    		<div class="modal-body col-md-12">
-		    			<div class="form-group">
-			    			<label class="control-label col-sm-3 col-form-label" for="email">New Header Name</label>
-			    			<div class="col-sm-6">
-			      				<input type="text" class="form-control" id="" placeholder="placeholder" ng-model="message"/>
-				    		</div>
-				  		</div>
-		    		</div>
-		    		<div class="modal-footer col-md-12">
-		      			<button type="button" class="btn btn-default" data-dismiss="modal">Okay</button>
-		      		</div>
-		      	</div>
-			</div>
-		</div>
-	</div>
+	<div ng-view></div>
 </div>
 <script>
+document.write('<base href="' + document.location + '" />');
 (function(){
 	document.body.addEventListener("click", function(e){
 		var elem = document.querySelectorAll('div.context-menu');

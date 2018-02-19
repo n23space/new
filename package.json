@@ -7,7 +7,8 @@
     "express": "^4.14.1",
     "https": "^1.0.0",
     "mongodb": "^2.2.29",
-    "xlsx": "^0.8.3"
+    "xlsx": "^0.8.3",
+    "connect-busboy": "^0.0.2"
   },
   "devDependencies": {},
   "scripts": {

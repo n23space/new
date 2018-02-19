@@ -78,7 +78,7 @@ app.post('/snowdata', function (req, res) {
   });
   
   req.on('end', function () {
-    console.log('Body ' + body);
+    //console.log('Body ' + body);
     const user = 'admin';
     const pass = '1@Welcome';
     var options = {
@@ -88,7 +88,7 @@ app.post('/snowdata', function (req, res) {
        auth: user + ':' + pass,
        method: 'GET'  
     };
-    console.info(options);
+    //console.info(options);
     var dataa = '';
     // Callback function is used to deal with response
     var reqGet = https.request(options, function(response){

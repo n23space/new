@@ -84,7 +84,7 @@ app.post('/snowdata', function (req, res) {
     var options = {
        host: 'dev56805.service-now.com',
        port: '443',
-       path: '/incident.do?JSONv2&sysparm_action=getRecords&sysparm_query=number=' + body,
+       path: '/incident.do?JSONv2&displayvalue=true&sysparm_action=getRecords&sysparm_query=number=' + body,
        auth: user + ':' + pass,
        method: 'GET'  
     };

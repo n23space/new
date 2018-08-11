@@ -82,7 +82,7 @@ app.post('/snowdata', function (req, res) {
     const user = 'admin';
     const pass = '1@Welcome';
     var options = {
-       host: 'dev25598.service-now.com',
+       host: 'dev56805.service-now.com',
        port: '443',
        path: '/incident.do?JSONv2&sysparm_action=getRecords&sysparm_query=number=' + body,
        auth: user + ':' + pass,
